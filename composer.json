@@ -1,0 +1,22 @@
+{
+    "name": "colddegree/brackets-checker",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Alexander Melnik",
+            "email": "colddegree@yandex.ru"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "ColdDegree\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "ColdDegree\\Tests\\": "tests/" }
+    },
+    "require": {
+        "php": "^7.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
+    }
+}
