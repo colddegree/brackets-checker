@@ -12,14 +12,18 @@ class BracketSequence
         '{' => '}',
     ];
 
-    private string $brackets;
+    /**
+     * @var string[]
+     */
+    private array $brackets;
 
     public function __construct(string $brackets)
     {
-        $validChars = [...\array_keys(self::BRACKETS_MAP), ...\array_values(self::BRACKETS_MAP)];
+        $chars = \str_split($brackets);
+        $validChars = [...$this->openingBrackets(), ...$this->closingBrackets()];
 
         $isValidInput = \array_reduce(
-            \str_split($brackets),
+            $chars,
             static fn (bool $acc, string $ch) => $acc && \in_array($ch, $validChars, true),
             true,
         );
@@ -28,11 +32,49 @@ class BracketSequence
             throw new \InvalidArgumentException('$brackets must contain characters from BRACKETS_MAP only');
         }
 
-        $this->brackets = $brackets;
+        $this->brackets = $chars;
     }
 
     public function isValid(): bool
     {
-        return true;
+        $stack = new \SplStack();
+        foreach ($this->brackets as $bracket) {
+            if (\in_array($bracket, $this->openingBrackets(), true)) {
+                $stack->push($bracket);
+            } elseif (\in_array($bracket, $this->closingBrackets(), true)) {
+                if ($stack->isEmpty()) {
+                    return false; // встретили закрывающуюся скобку и стек пуст — последовательность некорректна
+                }
+                if ($this->matches($stack->top(), $bracket)) { // в стеке всегда лежат открывающиеся скобки
+                    $stack->pop();
+                } else {
+                    return false;
+                }
+            } else {
+                throw new \RuntimeException();
+            }
+        }
+        return $stack->isEmpty();
+    }
+
+    private function matches(string $openBracket, string $closingBracket): bool
+    {
+        return self::BRACKETS_MAP[$openBracket] === $closingBracket;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function openingBrackets(): array
+    {
+        return \array_keys(self::BRACKETS_MAP);
+    }
+
+    /**
+     * @return string[]
+     */
+    private function closingBrackets(): array
+    {
+        return \array_values(self::BRACKETS_MAP);
     }
 }

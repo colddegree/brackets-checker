@@ -42,13 +42,17 @@ class BracketSequenceTest extends TestCase
         yield ['[]'];
         yield ['{}'];
         yield ['([]{})'];
+        yield ['([]{}{}{}()[]())([])[{(){}[]}]{}'];
     }
 
     public function invalidSequenceProvider(): \Generator
     {
         yield ['([]})({}'];
         yield ['('];
+        yield [')'];
         yield ['[]{'];
+        yield ['(((((((((('];
+        yield [')))'];
     }
 
     /**
